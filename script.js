@@ -77,11 +77,11 @@ class Competitor {
         // var weightedMatchWinPct = (this.matchWinPct * this.matchWinValueAvg) - ((1-this.matchWinPct) * this.matchLossValueAvg);
         var wWins = (this.matchWins * this.matchWinValueAvg);
         var wLosses = (this.matchLosses * this.matchLossValueAvg);
-        this.matchWinPctWeighted = wWins / (wWins + wLosses); 
+        this.matchWinPctWeighted = wWins / (wWins + wLosses);
 
         var wWins = (this.gameWins * this.gameWinValueAvg);
         var wLosses = (this.gameLosses * this.gameLossValueAvg);
-        this.gameWinPctWeighted = wWins / (wWins + wLosses); 
+        this.gameWinPctWeighted = wWins / (wWins + wLosses);
 
 
         var modifiedmatchpct = Math.atan(Math.PI * this.matchWinPctWeighted + 0.2 - (Math.PI / 2));
@@ -133,6 +133,7 @@ class Match {
 var t1id = "984a0yjy";
 var t2id = "9hxarvtz";
 var t3id = "l0asqvvj";
+var t4id = "9qdh8yf3";
 
 // https://api.challonge.com/v1/tournaments/{tournament}/participants.{json|xml}
 // https://api.challonge.com/v1/tournaments/l0asqvvj/participants.json
@@ -144,11 +145,14 @@ var t3id = "l0asqvvj";
 var tournament1info = { people: tournament1participants, matches: tournament1 };
 var tournament2info = { people: tournament2participants, matches: tournament2 };
 var tournament3info = { people: tournament3participants, matches: tournament3 };
+var tournament4info = { people: tournament4participants, matches: tournament4 };
 var tournament1data = getTournamentResults(tournament1info);
 var tournament2data = getTournamentResults(tournament2info);
 var tournament3data = getTournamentResults(tournament3info);
+var tournament4data = getTournamentResults(tournament4info);
 var alltournaments = tournament1data.concat(tournament2data);
 var alltournaments = alltournaments.concat(tournament3data);
+var alltournaments = alltournaments.concat(tournament4data);
 
 console.log("Here's tournament data: ");
 console.log(alltournaments);
@@ -188,6 +192,7 @@ function getTournamentResults(tournament) {
         }
         return (tpeoplearray);
     }
+
     function getMatchResults(tresult) {
         var tresultarray = [];
 
@@ -265,6 +270,7 @@ function assignResultsToPeople(matchdata) {
             }
         }
     }
+
     function competitorExists(name) {
         for (i = 0; i < competitordata.length; i++) {
             if (name == competitordata[i].name) {
@@ -329,6 +335,7 @@ function calcASRweighted(matchdata) {
     for (i = 0; i < competitordata.length; i++) {
         competitordata[i].calcWeightedASR();
     }
+
     function getASRunweighted(name) {
         for (k = 0; k < competitordata.length; k++) {
             if (competitordata[k].name == name) {
@@ -336,6 +343,7 @@ function calcASRweighted(matchdata) {
             }
         }
     }
+
     function calcWeight(competitor, opp, matchwinner, wins, losses) {
         var ASRunweighteddifference = competitor.ASRunweighted - getASRunweighted(opp);
         var ASRunweighteddifference = 500 - getASRunweighted(opp);
@@ -351,7 +359,8 @@ function calcASRweighted(matchdata) {
         }
         competitor.gameWinValueTotal += (winweight * wins);
         competitor.gameLossValueTotal += (lossweight * losses);
-        function calcWeightModifier(x, coeff){
+
+        function calcWeightModifier(x, coeff) {
             return (coeff * 1 * Math.atan(x / 400) + 1);
         }
     }
@@ -385,7 +394,7 @@ function createTableForCompetitors() {
         var th = document.createElement('th');
         var h1 = document.createElement('h1');
         h1.innerHTML = getThNames(Object.keys(competitordata[0])[j]);
-        if(isBonusData(Object.keys(competitordata[0])[j])){
+        if (isBonusData(Object.keys(competitordata[0])[j])) {
             th.className = "hide";
         }
         th.append(h1);
@@ -399,17 +408,17 @@ function createTableForCompetitors() {
             var td = document.createElement('td');
             var data = competitordata[i][Object.keys(competitordata[i])[j]];
             if (typeof data == 'number') {
-                if(Object.keys(competitordata[0])[j] == "matchWinPct" || Object.keys(competitordata[0])[j] == "gameWinPct"){
-                    data = (data*100).toFixed() + "%";
+                if (Object.keys(competitordata[0])[j] == "matchWinPct" || Object.keys(competitordata[0])[j] == "gameWinPct") {
+                    data = (data * 100).toFixed() + "%";
                 }
-                else if(isBonusData(Object.keys(competitordata[0])[j])){
+                else if (isBonusData(Object.keys(competitordata[0])[j])) {
                     data = data.toFixed(2);
                 }
-                else{
+                else {
                     data = data.toFixed();
                 }
             }
-            if(isBonusData(Object.keys(competitordata[0])[j])){
+            if (isBonusData(Object.keys(competitordata[0])[j])) {
                 td.className = "hide";
             }
             td.innerHTML = data;
@@ -421,39 +430,41 @@ function createTableForCompetitors() {
     div.append(table);
     node.innerHTML = "";
     node.append(div);
-    
-    function getThNames(label){
-        const highlightData = ["name","rank","ASRweighted","gameWins","gameLosses","gameWinPct", "matchWins", "matchLosses", "matchWinPct",]
-        const niceNames = ["Name", "Rank", "Rating", "Game Wins", "Game Losses", "Game Win %", "Match Wins", "Match Losses", "Match Win %",]
-        for (k=0; k<highlightData.length;k++){
-            if(label == highlightData[k]){
+
+    function getThNames(label) {
+        const highlightData = ["name", "rank", "ASRweighted", "gameWins", "gameLosses", "gameWinPct", "matchWins", "matchLosses", "matchWinPct", ]
+        const niceNames = ["Name", "Rank", "Rating", "Game Wins", "Game Losses", "Game Win %", "Match Wins", "Match Losses", "Match Win %", ]
+        for (k = 0; k < highlightData.length; k++) {
+            if (label == highlightData[k]) {
                 return niceNames[k];
             }
         }
         return label;
     }
-    function isBonusData(label){
-        const highlightData = ["name","rank","ASRweighted","gameWins","gameLosses","gameWinPct", "matchWins", "matchLosses", "matchWinPct",]
-        for (k=0; k<highlightData.length;k++){
-            if(label == highlightData[k]){
+
+    function isBonusData(label) {
+        const highlightData = ["name", "rank", "ASRweighted", "gameWins", "gameLosses", "gameWinPct", "matchWins", "matchLosses", "matchWinPct", ]
+        for (k = 0; k < highlightData.length; k++) {
+            if (label == highlightData[k]) {
                 return false;
             }
         }
         return true;
     }
 }
-function showAllData(){
+
+function showAllData() {
     var elements = document.querySelectorAll('.hide');
-    if(elements.length > 1){
+    if (elements.length > 1) {
         document.getElementById('dataamountbutton').value = "Show Less Data";
-        for(i=0;i<elements.length;i++){
+        for (i = 0; i < elements.length; i++) {
             elements[i].className = "show";
         }
     }
-    else{
+    else {
         var elements = document.querySelectorAll('.show')
         document.getElementById('dataamountbutton').value = "Show All Data";
-        for(i=0;i<elements.length;i++){
+        for (i = 0; i < elements.length; i++) {
             elements[i].className = "hide";
         }
     }
@@ -507,11 +518,11 @@ function showAllData(){
 // let targetUrl = "https://IdemCollector:PT3UGX1KDLF52EDvSON5oVlb1egd3pm4IVyyjAXv@api.challonge.com/v1/tournaments/l0asqvvj/matches.json";
 // let otherURL = "https://api.challonge.com/v1/tournaments/984a0yjy/matches.json"
 // fetch(targetUrl).then(function (response) {
-    //     return response.json();
-    // }).then(function (json) {
-    //     console.log(json);
-    //     matches = json;
-    // })
+//     return response.json();
+// }).then(function (json) {
+//     console.log(json);
+//     matches = json;
+// })
 // function plswork(){
 //         var myInit = { 
 //             method: 'GET',
@@ -534,16 +545,16 @@ function showAllData(){
 //         })
 
 
-    // function loadDoc(){
-    //     var xhttp = new XMLHttpRequest();
-    //     xhttp.onreadystatechange = function() {
-    //         if (this.readyState == 4 && this.status == 200) {
-    //         console.log(this.responseText);
-    //         }
-    //     };
-    //     xhttp.open("GET", proxyUrl+targetUrl, true);
-    //     xhttp.send();
-    // }
+// function loadDoc(){
+//     var xhttp = new XMLHttpRequest();
+//     xhttp.onreadystatechange = function() {
+//         if (this.readyState == 4 && this.status == 200) {
+//         console.log(this.responseText);
+//         }
+//     };
+//     xhttp.open("GET", proxyUrl+targetUrl, true);
+//     xhttp.send();
+// }
 
 
 
@@ -558,4 +569,3 @@ function showAllData(){
 // api key: PT3UGX1KDLF52EDvSON5oVlb1egd3pm4IVyyjAXv
 
 // https://IdemCollector:PT3UGX1KDLF52EDvSON5oVlb1egd3pm4IVyyjAXv@api.challonge.com/v1/tournaments/984a0yjy/matches.json
-
